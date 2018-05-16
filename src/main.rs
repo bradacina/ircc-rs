@@ -7,18 +7,36 @@ use tcod::input::KeyCode;
 const SCREEN_WIDTH: i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
 
-const NO_KEY: input::Key = input::Key {
-    code: KeyCode::NoKey,
-    alt: false,
-    ctrl: false,
-    left_alt: false,
-    left_ctrl: false,
-    pressed: false,
-    printable: ' ',
-    right_alt: false,
-    right_ctrl: false,
-    shift: false
-};
+fn handle_input(cur_x: &mut i32, cur_y: &mut i32, exit: &mut bool, key_code: KeyCode) {
+    match key_code {
+            KeyCode::Escape => *exit = true,
+            KeyCode::Left => {
+                *cur_x = *cur_x - 1;
+                if *cur_x < 0 {
+                    *cur_x = 0
+                }
+            }
+            KeyCode::Right => {
+                *cur_x = *cur_x + 1;
+                if *cur_x >= SCREEN_WIDTH {
+                    *cur_x = SCREEN_WIDTH - 1
+                }
+            }
+            KeyCode::Up => {
+                *cur_y = *cur_y - 1;
+                if *cur_y < 0 {
+                    *cur_y = 0
+                }
+            }
+            KeyCode::Down => {
+                *cur_y = *cur_y + 1;
+                if *cur_y >= SCREEN_HEIGHT {
+                    *cur_y = SCREEN_HEIGHT - 1
+                }
+            }
+            _ => {}
+    }
+}
 
 fn main() {
     let mut con = Root::initializer()
@@ -49,35 +67,10 @@ fn main() {
         );
 
         con.flush();
-        let keypress = con.check_for_keypress(input::KEY_PRESSED)
-            .unwrap_or(NO_KEY);
-        match keypress.code {
-            KeyCode::Escape => exit = true,
-            KeyCode::Left => {
-                cur_x = cur_x - 1;
-                if cur_x < 0 {
-                    cur_x = 0
-                }
-            }
-            KeyCode::Right => {
-                cur_x = cur_x + 1;
-                if cur_x >= SCREEN_WIDTH {
-                    cur_x = SCREEN_WIDTH - 1
-                }
-            }
-            KeyCode::Up => {
-                cur_y = cur_y - 1;
-                if cur_y < 0 {
-                    cur_y = 0
-                }
-            }
-            KeyCode::Down => {
-                cur_y = cur_y + 1;
-                if cur_y >= SCREEN_HEIGHT {
-                    cur_y = SCREEN_HEIGHT - 1
-                }
-            }
-            _ => {}
+        let keypress = con.check_for_keypress(input::KEY_PRESSED);
+        
+        if let Some(keypress) = keypress {
+            handle_input(&mut cur_x, &mut cur_y, &mut exit, keypress.code);
         }
     }
 }
