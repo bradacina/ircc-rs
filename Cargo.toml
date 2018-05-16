@@ -1,0 +1,8 @@
+[package]
+name = "ircc-rs"
+version = "0.1.0"
+authors = ["Bogdan.Radacina <bogdan.radacina@zipmoney.com.au>"]
+
+[dependencies]
+tcod="*"
+rand="*"
